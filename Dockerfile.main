@@ -1,0 +1,28 @@
+# Dockerfile.main
+
+FROM python:3.11-slim
+
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    poppler-utils \
+    tesseract-ocr \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Add this line to upgrade sentence-transformers and set environment variable
+RUN pip install --upgrade sentence-transformers
+ENV TOKENIZERS_PARALLELISM=false
+
+COPY . .
+
+# Copy models and Challenge_1b into the image (not as volumes)
+COPY models/all-MiniLM-L6-v2 /app/models/all-MiniLM-L6-v2
+COPY Challenge_1b /app/Challenge_1b
+
+RUN mkdir -p /app/input /app/output /app/output2
+
+CMD ["python", "main.py"]

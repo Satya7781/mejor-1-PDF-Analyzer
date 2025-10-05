@@ -1,0 +1,31 @@
+# Python core PDF and ML dependencies
+pdfplumber==0.10.3
+pdfminer.six==20221105
+PyMuPDF==1.23.8
+camelot-py==0.11.0
+
+# Embeddings & similarity
+sentence-transformers==2.2.2
+huggingface_hub==0.13.4
+scikit-learn==1.3.0
+numpy==1.24.3
+
+# Data processing
+pandas==2.0.3
+
+# OCR dependencies (optional fallback)
+pytesseract==0.3.10
+pdf2image==1.17.0
+Pillow==10.0.0
+
+# Multiprocessing / system utils
+psutil==5.9.5
+
+# Development & testing
+pytest==7.4.2
+pytest-cov==4.1.0
+mypy==1.5.1
+
+# Code formatting (optional)
+black==23.7.0
+flake8==6.0.0

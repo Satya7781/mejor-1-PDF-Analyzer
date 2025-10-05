@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adobe Hackathon - PDF Intelligence</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Header -->
+        <header class="bg-primary text-white py-4 mb-4">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h1 class="mb-0"><i class="fas fa-file-pdf me-2"></i>PDF Intelligence</h1>
+                        <p class="mb-0">Adobe Hackathon - Advanced PDF Processing & Analysis</p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <span class="badge bg-success fs-6">
+                            <i class="fas fa-robot me-1"></i>AI-Powered
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="container">
+            <!-- Upload Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card shadow">
+                        <div class="card-header bg-light">
+                            <h3 class="card-title mb-0">
+                                <i class="fas fa-upload me-2"></i>Upload PDF Document
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="uploadForm" enctype="multipart/form-data">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="pdfFile" class="form-label">Select PDF File</label>
+                                            <input type="file" class="form-control" id="pdfFile" name="file" accept=".pdf" required>
+                                            <div class="form-text">Maximum file size: 50MB</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="processingType" class="form-label">Processing Type</label>
+                                            <select class="form-select" id="processingType" name="processing_type">
+                                                <option value="basic">Basic Outline Extraction</option>
+                                                <option value="advanced">AI-Powered Analysis</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Advanced Options (hidden by default) -->
+                                <div id="advancedOptions" class="row" style="display: none;">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="persona" class="form-label">User Persona</label>
+                                            <select class="form-select" id="persona" name="persona">
+                                                <option value="General User">General User</option>
+                                                <option value="Travel Planner">Travel Planner</option>
+                                                <option value="HR Professional">HR Professional</option>
+                                                <option value="Food Contractor">Food Contractor</option>
+                                                <option value="Researcher">Researcher</option>
+                                                <option value="Student">Student</option>
+                                                <option value="Business Analyst">Business Analyst</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="task" class="form-label">Task Description</label>
+                                            <input type="text" class="form-control" id="task" name="task" 
+                                                   placeholder="e.g., Extract key information for project planning">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary btn-lg" id="processBtn">
+                                        <i class="fas fa-cogs me-2"></i>Process PDF
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Section -->
+            <div id="progressSection" class="row mb-4" style="display: none;">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <div class="spinner-border text-primary mb-3" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <h5>Processing PDF...</h5>
+                            <p class="text-muted">This may take a few moments depending on the document size.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="resultsSection" class="row" style="display: none;">
+                <div class="col-12">
+                    <div class="card shadow">
+                        <div class="card-header bg-success text-white">
+                            <h3 class="card-title mb-0">
+                                <i class="fas fa-check-circle me-2"></i>Processing Results
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <!-- Results will be populated here -->
+                            <div id="resultsContent"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Challenge 1B Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-info text-white">
+                            <h3 class="card-title mb-0">
+                                <i class="fas fa-trophy me-2"></i>Challenge 1B - Multi-Collection Analysis
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <!-- Tab Navigation -->
+                            <ul class="nav nav-tabs mb-3" id="challenge1bTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="collections-tab" data-bs-toggle="tab" data-bs-target="#collections" type="button" role="tab">
+                                        <i class="fas fa-folder-open me-1"></i>Pre-loaded Collections
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="custom-tab" data-bs-toggle="tab" data-bs-target="#custom" type="button" role="tab">
+                                        <i class="fas fa-upload me-1"></i>Custom PDF Test
+                                    </button>
+                                </li>
+                            </ul>
+
+                            <!-- Tab Content -->
+                            <div class="tab-content" id="challenge1bTabContent">
+                                <!-- Pre-loaded Collections Tab -->
+                                <div class="tab-pane fade show active" id="collections" role="tabpanel">
+                                    <p>Process the pre-loaded Challenge 1B collections with persona-specific analysis.</p>
+                                    <button id="processChallenge1B" class="btn btn-info">
+                                        <i class="fas fa-play me-2"></i>Process Challenge 1B Collections
+                                    </button>
+                                    <div id="challenge1BResults" class="mt-3"></div>
+                                </div>
+
+                                <!-- Custom PDF Test Tab -->
+                                <div class="tab-pane fade" id="custom" role="tabpanel">
+                                    <p>Upload your own PDF and test it with different personas and tasks.</p>
+                                    
+                                    <form id="challenge1bCustomForm" enctype="multipart/form-data">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="challenge1bPdf" class="form-label">Upload PDF</label>
+                                                    <input type="file" class="form-control" id="challenge1bPdf" name="file" accept=".pdf" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="challenge1bPersona" class="form-label">Select Persona</label>
+                                                    <select class="form-select" id="challenge1bPersona" name="persona">
+                                                        <option value="Travel Planner">Travel Planner</option>
+                                                        <option value="HR Professional">HR Professional</option>
+                                                        <option value="Food Contractor">Food Contractor</option>
+                                                        <option value="Researcher">Researcher</option>
+                                                        <option value="Student">Student</option>
+                                                        <option value="Business Analyst">Business Analyst</option>
+                                                        <option value="Project Manager">Project Manager</option>
+                                                        <option value="Marketing Manager">Marketing Manager</option>
+                                                        <option value="Financial Advisor">Financial Advisor</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="mb-3">
+                                                    <label for="challenge1bTask" class="form-label">Task Description</label>
+                                                    <textarea class="form-control" id="challenge1bTask" name="task" rows="2" 
+                                                              placeholder="Describe what you want to accomplish with this document..."></textarea>
+                                                    <div class="form-text">
+                                                        <strong>Examples:</strong>
+                                                        <ul class="mb-0 mt-1">
+                                                            <li>Plan a 4-day trip for college friends</li>
+                                                            <li>Create training materials for new employees</li>
+                                                            <li>Extract key research findings for a report</li>
+                                                            <li>Find budget information for project planning</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="text-center">
+                                            <button type="submit" class="btn btn-success btn-lg" id="processCustomBtn">
+                                                <i class="fas fa-brain me-2"></i>Analyze with AI
+                                            </button>
+                                        </div>
+                                    </form>
+
+                                    <div id="customChallenge1BResults" class="mt-4"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <div class="container">
+            <p class="mb-0">&copy; 2024 Adobe Hackathon - PDF Intelligence Toolkit</p>
+            <p class="mb-0"><small>Individual Project - Created entirely by Satya</small></p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
