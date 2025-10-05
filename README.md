@@ -48,19 +48,43 @@ This project represents my **solo development work** showcasing expertise in ful
 ### **Option 1: Web Interface (Recommended)**
 
 ```bash
-# Clone and setup
-git clone <your-repo-url>
-cd adobe_hackathon
-python -m venv venv
+# Clone repository
+git clone https://github.com/Satya7781/mejor-1-PDF-Analyzer.git
+cd mejor-1-PDF-Analyzer
+
+# Create virtual environment
+python3 -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install --upgrade pip
 pip install -r requirements.txt
 
 # Start web server
 python web_app.py
 
-# Open browser
-# Go to: http://localhost:5000
+# Open browser → http://localhost:5000
 ```
+
+### **System Dependencies (Required)**
+
+#### **Ubuntu/Debian:**
+```bash
+sudo apt-get update && sudo apt-get install -y \
+    python3 python3-pip python3-venv \
+    build-essential poppler-utils tesseract-ocr
+```
+
+#### **macOS:**
+```bash
+brew install python poppler tesseract
+```
+
+#### **Windows:**
+- Install Python 3.8+ from python.org
+- Install poppler and tesseract (see [SETUP_GUIDE.md](SETUP_GUIDE.md))
+
+**📋 For detailed setup instructions, see [SETUP_GUIDE.md](SETUP_GUIDE.md)**
 
 ### **Option 2: Command Line**
 
