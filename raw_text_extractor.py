@@ -22,7 +22,7 @@ class RawTextExtractor:
     def __init__(self) -> None:
         self.logger = logging.getLogger(__name__)
 
-    def _extract_with_pdfplumber(pdf_path: Path) -> List[Dict[str, Any]]:
+    def _extract_with_pdfplumber(self, pdf_path: Path) -> List[Dict[str, Any]]:
         """Secondary extraction using pdfplumber to catch text pdfminer sometimes misses (tiny fonts, rotated)."""
         results: List[Dict[str, Any]] = []
         try:
@@ -59,7 +59,7 @@ class RawTextExtractor:
             # Fallback pass with pdfplumber for any pages whose text is empty
             missing_pages = [r["page"] for r in results if not r["text"].strip()]
             if missing_pages:
-                plumber_pages = _extract_with_pdfplumber(pdf_path)
+                plumber_pages = self._extract_with_pdfplumber(pdf_path)
                 page_map = {p["page"]: p["text"] for p in plumber_pages}
                 for r in results:
                     if not r["text"].strip() and r["page"] in page_map:

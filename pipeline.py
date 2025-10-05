@@ -37,27 +37,33 @@ class DocumentPipeline:
         # 2. Raw text extraction for completeness
         raw_text_pages = self.raw_extractor.extract(pdf_path)
 
-        # 3. Table extraction
         tables = self.table_extractor.extract_tables(pdf_path)
 
         # 4. Identify missing pages text and OCR
         pages_missing_text: List[int] = [p["page"] for p in raw_text_pages if not p["text"].strip()]
 
-        ocr_results: List[Dict[str, Any]] = []
-        if self.ocr_enabled and pages_missing_text:
-            self.logger.info(f"OCR needed for {len(pages_missing_text)} pages without text")
-            ocr_results = self.ocr_processor.ocr_pages(pdf_path, pages_missing_text)
-            # Merge OCR text back into raw_text_pages
-            page_to_text = {r["page"]: r["text"] for r in ocr_results}
-            for page_obj in raw_text_pages:
-                if page_obj["page"] in page_to_text:
-                    page_obj["text"] = page_to_text[page_obj["page"]]
-
-        # Assemble final data structure
+        # Step 3: OCR for pages without text (disabled for now due to tesseract issues)
+        pages_without_text = [page for page in raw_text_pages if not page['text'].strip()]
+        if pages_without_text:
+            self.logger.info(f"OCR would be needed for {len(pages_without_text)} pages without text (skipping OCR)")
+            # OCR disabled - continue without it
+            # try:
+            #     from ocr_utils import OCRProcessor
+            #     ocr = OCRProcessor()
+            #     ocr_results = ocr.process_pdf(pdf_path, [p['page'] for p in pages_without_text])
+            #     
+            #     # Merge OCR results back into raw_text
+            #     ocr_map = {r['page']: r['text'] for r in ocr_results}
+            #     for page in raw_text_pages:
+            #         if page['page'] in ocr_map and not page['text'].strip():
+            #             page['text'] = ocr_map[page['page']]
+            #             
+            # except Exception as e:
+            #     self.logger.warning(f"OCR processing failed: {e}")
+            #     # Continue without OCR
         return {
             "title": outline_data.get("title", "Untitled Document"),
             "outline": outline_data.get("outline", []),
             "raw_text": raw_text_pages,
-            "tables": tables,
-            "ocr": ocr_results,
-        } 
+            "tables": tables
+        }

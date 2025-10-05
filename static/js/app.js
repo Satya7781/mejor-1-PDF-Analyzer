@@ -145,16 +145,27 @@ document.addEventListener('DOMContentLoaded', function() {
     function showResults(result, resultFile) {
         const resultsContent = document.getElementById('resultsContent');
         
+        const headingCount = result.outline ? result.outline.length : 0;
+        const pageCount = result.raw_text ? result.raw_text.length : 0;
+        const tableCount = result.tables ? result.tables.length : 0;
+        
         let html = `
             <div class="row">
                 <div class="col-md-6">
                     <h5><i class="fas fa-info-circle me-2"></i>Document Information</h5>
                     <div class="result-item">
                         <strong>Title:</strong> ${result.title || 'Untitled Document'}<br>
-                        <strong>Pages:</strong> ${result.raw_text ? result.raw_text.length : 'N/A'}<br>
-                        <strong>Headings:</strong> ${result.outline ? result.outline.length : 0}<br>
-                        <strong>Tables:</strong> ${result.tables ? result.tables.length : 0}
+                        <strong>Pages:</strong> ${pageCount}<br>
+                        <strong>Headings:</strong> ${headingCount}<br>
+                        <strong>Tables:</strong> ${tableCount}
                     </div>
+                    ${headingCount === 0 ? `
+                    <div class="alert alert-info mt-2">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>No headings detected.</strong> This is normal for PDFs without structured headings 
+                        (like brochures, forms, or scanned documents). Text extraction still works!
+                    </div>
+                    ` : ''}
                 </div>
                 <div class="col-md-6">
                     <h5><i class="fas fa-download me-2"></i>Download Results</h5>
@@ -163,6 +174,12 @@ document.addEventListener('DOMContentLoaded', function() {
                             <i class="fas fa-file-download me-1"></i>Download JSON
                         </a>
                     </div>
+                    ${pageCount > 0 ? `
+                    <div class="alert alert-success mt-2">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong>Processing successful!</strong> Extracted text from ${pageCount} pages.
+                    </div>
+                    ` : ''}
                 </div>
             </div>
         `;

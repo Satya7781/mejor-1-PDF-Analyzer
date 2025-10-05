@@ -93,6 +93,11 @@ def index():
     """Main page."""
     return render_template('index.html')
 
+@app.route('/test')
+def test_page():
+    """Test page for debugging."""
+    return render_template('test.html')
+
 @app.route('/api/upload', methods=['POST'])
 def upload_file():
     """Handle file upload and processing."""
